@@ -1,0 +1,294 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ── Page Header ────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+  }
+}
+
+// ── Filter Bar ─────────────────────────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    .filter-label {
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.5);
+      font-weight: 500;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .filter-field {
+      width: 160px;
+
+      &.search-field {
+        width: 200px;
+      }
+    }
+  }
+
+  .search-group {
+    flex-direction: column;
+  }
+
+  .filter-spacer {
+    flex: 1;
+  }
+
+  .delete-grid-btn {
+    align-self: flex-end;
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+
+  // Compact form fields in filter bar
+  mat-form-field {
+    ::ng-deep {
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+
+      .mat-mdc-text-field-wrapper {
+        padding: 0 8px;
+      }
+
+      .mat-mdc-form-field-infix {
+        padding-top: 6px;
+        padding-bottom: 6px;
+        min-height: unset;
+      }
+
+      input.mat-mdc-input-element {
+        font-size: 13px;
+      }
+
+      .mat-mdc-select-value {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.collection-count {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+// ── Scraping session banner ─────────────────────────────────────────────────
+.scraping-session-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  font-size: 13px;
+
+  .banner-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+  }
+
+  .banner-icon--success {
+    color: #2e7d32;
+  }
+
+  .banner-icon--error {
+    color: #c62828;
+  }
+
+  .banner-icon--cancel {
+    color: #b71c1c;
+    margin-left: -4px;
+  }
+
+  .banner-icon--muted {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .banner-icon-group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .banner-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .banner-title {
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .banner-meta {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  &--loading {
+    background: #f5f5f5;
+    color: rgba(0, 0, 0, 0.6);
+
+    .banner-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      animation: spin 1.2s linear infinite;
+    }
+  }
+
+  &--active {
+    background: #e8f5e9;
+  }
+
+  &--expired {
+    background: #ffebee;
+  }
+
+  &--none {
+    background: #fafafa;
+  }
+}
+
+// ── Grid Wrapper ──────────────────────────────────────────────────────────────
+.grid-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+
+  .grid {
+    width: 100%;
+    height: 100%;
+  }
+
+  .grid-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    gap: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+
+    .loading-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      animation: spin 1.5s linear infinite;
+    }
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.grid-footer {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+  min-height: 36px;
+
+  .rows-selected {
+    font-weight: 500;
+  }
+
+  .footer-spacer {
+    flex: 1;
+  }
+
+  .total-count {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// ── AG Grid theme overrides ───────────────────────────────────────────────────
+::ng-deep {
+  .ag-theme-alpine {
+    --ag-header-background-color: #f8f9fa;
+    --ag-header-foreground-color: #495057;
+    --ag-border-color: #dee2e6;
+    --ag-row-hover-color: #e8f4fd;
+    --ag-selected-row-background-color: #d0e8fb;
+    --ag-font-size: 13px;
+
+    .ag-header-cell-label {
+      font-weight: 600;
+    }
+
+    .ag-paging-panel {
+      font-size: 13px;
+      border-top: 1px solid var(--ag-border-color);
+    }
+
+    .ag-checkbox-input-wrapper {
+      font-size: 14px;
+    }
+  }
+}

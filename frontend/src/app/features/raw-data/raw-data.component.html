@@ -1,0 +1,184 @@
+<!-- ── Top Toolbar ─────────────────────────────────────────────────────────── -->
+<div class="page-header">
+  <div class="header-left">
+    <h1 class="page-title">Raw Data</h1>
+  </div>
+  <div class="header-actions">
+    <button mat-stroked-button (click)="startSync()" [disabled]="isSyncing()" matTooltip="Sync all Airtable data">
+      <mat-icon>sync</mat-icon>
+      Sync Airtable Data
+    </button>
+
+    <button mat-stroked-button [matMenuTriggerFor]="globalMenu" matTooltip="Global search grid options">
+      <mat-icon>grid_view</mat-icon>
+      New Global Search Grid
+    </button>
+
+    <mat-menu #globalMenu="matMenu">
+      <button mat-menu-item (click)="initScrapingSession()">
+        <mat-icon>manage_accounts</mat-icon>
+        Setup Scraping Session
+      </button>
+      <button mat-menu-item (click)="startRevisionSync()">
+        <mat-icon>history</mat-icon>
+        Sync Revision History
+      </button>
+    </mat-menu>
+
+    <!-- <button mat-stroked-button routerLink="/dashboard/logs" matTooltip="View raw data logs">
+      <mat-icon>receipt_long</mat-icon>
+      Raw Data Logs
+    </button> -->
+  </div>
+</div>
+
+<!-- ── Progress Bar ────────────────────────────────────────────────────────── -->
+@if (isSyncing()) {
+  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+}
+
+<!-- ── Airtable scraping session (Puppeteer cookies for revision history) ───── -->
+@if (scrapingSessionLoading()) {
+  <div class="scraping-session-banner scraping-session-banner--loading" role="status">
+    <mat-icon class="banner-icon">hourglass_empty</mat-icon>
+    <span>Checking scraping session…</span>
+  </div>
+} @else {
+  @if (scrapingSession(); as sess) {
+    @switch (sess.status) {
+      @case ('active') {
+        <div class="scraping-session-banner scraping-session-banner--active" role="status">
+          <mat-icon class="banner-icon banner-icon--success" matTooltip="Scraping session is valid">check_circle</mat-icon>
+          <div class="banner-body">
+            <span class="banner-title">Scraping session active</span>
+            <span class="banner-meta">
+              Created {{ formatScrapingSessionDate(sess.extractedAt) }}
+              · Expires {{ formatScrapingSessionDate(sess.expiresAt) }}
+            </span>
+          </div>
+          <button mat-stroked-button type="button" (click)="initScrapingSession()" matTooltip="Create a new session">
+            Renew
+          </button>
+        </div>
+      }
+      @case ('expired') {
+        <div class="scraping-session-banner scraping-session-banner--expired" role="alert">
+          <span class="banner-icon-group" matTooltip="Session expired or invalidated">
+            <mat-icon class="banner-icon banner-icon--error">error</mat-icon>
+          </span>
+          <div class="banner-body">
+            <span class="banner-title">Scraping session expired</span>
+            <span class="banner-meta">
+              Last session: created {{ formatScrapingSessionDate(sess.extractedAt) }},
+              expired {{ formatScrapingSessionDate(sess.expiresAt) }}
+              @if (sess.isValid === false) {
+                <span> · invalidated</span>
+              }
+            </span>
+          </div>
+          <button mat-flat-button color="warn" type="button" (click)="initScrapingSession()">
+            Renew session
+          </button>
+        </div>
+      }
+      @case ('none') {
+        <div class="scraping-session-banner scraping-session-banner--none" role="status">
+          <mat-icon class="banner-icon banner-icon--muted">cloud_off</mat-icon>
+          <div class="banner-body">
+            <span class="banner-title">No scraping session</span>
+            <span class="banner-meta">Set up a browser session to sync revision history from Airtable.</span>
+          </div>
+          <button mat-stroked-button color="primary" type="button" (click)="initScrapingSession()">
+            Setup session
+          </button>
+        </div>
+      }
+    }
+  }
+}
+
+<!-- ── Filter Bar ──────────────────────────────────────────────────────────── -->
+<div class="filter-bar mat-elevation-z1">
+
+  <!-- Active Integrations -->
+  <div class="filter-group">
+    <span class="filter-label">Active Integrations</span>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select
+        [value]="selectedIntegration()"
+        (selectionChange)="onIntegrationChange($event.value)"
+      >
+        @for (integration of integrations; track integration.value) {
+          <mat-option [value]="integration.value">{{ integration.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Entity (MongoDB Collection) -->
+  <div class="filter-group">
+    <span class="filter-label">Entity</span>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select
+        [value]="selectedCollection()"
+        (selectionChange)="onCollectionChange($event.value)"
+        placeholder="Select entity..."
+      >
+        @for (col of collections(); track col.name) {
+          <mat-option [value]="col.name">
+            {{ col.name }}
+            <span class="collection-count">({{ col.count | number }})</span>
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Search -->
+  <div class="filter-group search-group">
+    <span class="filter-label">Search</span>
+    <mat-form-field appearance="outline" class="filter-field search-field">
+      <input
+        matInput
+        placeholder="Search..."
+        [value]="searchText()"
+        (input)="onSearchChange($any($event.target).value)"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="filter-spacer"></div>
+</div>
+
+<!-- ── AG Grid ─────────────────────────────────────────────────────────────── -->
+<div class="grid-wrapper">
+  @if (isLoading()) {
+    <div class="grid-loading">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <span>Loading schema...</span>
+    </div>
+  }
+
+  <ag-grid-angular
+    class="ag-theme-alpine grid"
+    [columnDefs]="columnDefs()"
+    [defaultColDef]="defaultColDef"
+    [gridOptions]="gridOptions"
+    (gridReady)="onGridReady($event)"
+    (selectionChanged)="onSelectionChanged($event)"
+  ></ag-grid-angular>
+</div>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<div class="grid-footer">
+  <span class="rows-selected">
+    Rows Selected {{ rowsSelected() }}
+  </span>
+  <div class="footer-spacer"></div>
+  @if (totalRows() > 0) {
+    <span class="total-count">
+      Total: {{ totalRows() | number }} records · scroll for more
+    </span>
+  }
+</div>
