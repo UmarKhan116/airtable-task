@@ -20,7 +20,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 
@@ -60,7 +59,6 @@ const INTEGRATIONS = [{ value: 'airtable', label: 'Airtable' }];
     MatDialogModule,
     MatProgressBarModule,
     MatTooltipModule,
-    MatMenuModule,
     MatChipsModule,
     MatBadgeModule,
     AgGridModule,
@@ -143,6 +141,14 @@ export class RawDataComponent implements OnInit, OnDestroy {
     timer(300_000, 300_000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.loadScrapingSessionStatus());
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      error: (err) => {
+        this.snackBar.open(err?.error?.message ?? 'Logout failed', 'Dismiss', { duration: 5000 });
+      },
+    });
   }
 
   ngOnDestroy(): void {

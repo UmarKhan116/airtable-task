@@ -48,7 +48,7 @@ export class AuthService {
     return this.api.delete<ApiResponse<null>>('/auth/logout').pipe(
       tap(() => {
         this.clearToken();
-        this.router.navigate(['/']);
+        this.router.navigate(['/auth/login']);
       })
     );
   }

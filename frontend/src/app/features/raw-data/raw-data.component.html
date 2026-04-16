@@ -9,21 +9,26 @@
       Sync Airtable Data
     </button>
 
-    <button mat-stroked-button [matMenuTriggerFor]="globalMenu" matTooltip="Global search grid options">
-      <mat-icon>grid_view</mat-icon>
-      New Global Search Grid
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="startRevisionSync()"
+      [disabled]="isSyncing()"
+      matTooltip="Sync revision history from Airtable"
+    >
+      <mat-icon>history</mat-icon>
+      Sync Revision History
     </button>
 
-    <mat-menu #globalMenu="matMenu">
-      <button mat-menu-item (click)="initScrapingSession()">
-        <mat-icon>manage_accounts</mat-icon>
-        Setup Scraping Session
-      </button>
-      <button mat-menu-item (click)="startRevisionSync()">
-        <mat-icon>history</mat-icon>
-        Sync Revision History
-      </button>
-    </mat-menu>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="logout()"
+      matTooltip="Log out"
+      aria-label="Log out"
+    >
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
 
     <!-- <button mat-stroked-button routerLink="/dashboard/logs" matTooltip="View raw data logs">
       <mat-icon>receipt_long</mat-icon>
