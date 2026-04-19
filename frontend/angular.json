@@ -54,6 +54,7 @@
               }
             ],
             "styles": [
+              "@fontsource/material-icons/index.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
@@ -120,6 +121,7 @@
               }
             ],
             "styles": [
+              "@fontsource/material-icons/index.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
